@@ -10,7 +10,7 @@ class DataLoader:
     
     def get_metadata(self,directory):
         print("Getting Metadata")
-        response = requests.get("https://data-collection-backend.onrender.com/metadata"+ "/getAllMetadata")
+        response = requests.get("https://data-collection-backend.onrender.com/metadata/getAllMetadata")
 
         if response.status_code != 200:
             raise Exception(f"Failed to get metadata: {response.status_code} - {response.text}")
@@ -84,7 +84,7 @@ class DataLoader:
         print("Data Verified Successfully")
 
     def get_number_of_submissions(self):
-        response = requests.get("https://data-collection-backend.onrender.com/metadata"+ "/getNumberOfSubmissions")
+        response = requests.get("https://data-collection-backend.onrender.com/metadata/getNumberOfSubmissions")
         if response.status_code != 200:
             raise Exception(f"Failed to get number of submissions: {response.status_code} - {response.text}")
         number_of_submissions = response.json()
