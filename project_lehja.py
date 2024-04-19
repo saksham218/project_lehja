@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import requests
+import subprocess
         
 
 class DataLoader:
@@ -27,9 +28,29 @@ class DataLoader:
         response = requests.get(f"https://sakshamdatacollection.blob.core.windows.net/datacollection/{blob_name}")
         
         if response.status_code == 200:
-            with open(f"{directory}/{blob_name}.wav", "wb") as file:
+            with open("temp_audio.wav", "wb") as file:
                 file.write(response.content)
                 # print(f"{blob_name} downloaded successfully to {directory} folder")
+
+            subprocess.run(['ffmpeg', '-i', "temp_audio.wav", '-acodec', 'pcm_s16le', f"{directory}/{blob_name}.wav"])
+            os.remove("temp_audio.wav")
+
+            # with wave.open(f"{directory}/{blob_name}.wav", "wb") as wav_file:
+            #     # Set the WAV file parameters
+            #     # Number of audio channels (1 for mono, 2 for stereo)
+            #     n_channels = 2
+            #     # Sample width in bytes (1 for 8-bit audio, 2 for 16-bit audio, etc.)
+            #     sample_width = 2
+            #     # Sampling frequency
+            #     frame_rate = 22050
+            #     # Number of frames
+            #     n_frames = len(response.content) // sample_width
+
+            #     # Set the WAV file parameters
+            #     wav_file.setparams((n_channels, sample_width, frame_rate, n_frames, "NONE", "not compressed"))
+
+            #     # Write audio data to the WAV file
+            #     wav_file.writeframes(response.content)
         else:
             print(f"Failed to download blob: {response.status_code} - {response.text}")
 
@@ -68,7 +89,7 @@ class DataLoader:
         metadata = json.load(open(f"{directory}/metadata.json"))
         number_of_documents = len(metadata)
 
-        print("Number of documents:",number_of_documents)
+        print("Number of documents: ",number_of_documents)
 
         for index,doc in enumerate(metadata):
             print("index: ",index+1,"/",number_of_documents)
